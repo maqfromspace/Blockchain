@@ -46,4 +46,12 @@ public class Blockchain {
     public void printBlockchain() {
         Arrays.stream(blocks).forEach(System.out::println);
     }
+
+    public boolean validate() {
+        for(int i = 0; i < blocks.length - 1; i++) {
+            if(!blocks[i].getHashOfTheCurrentBlock().equals(blocks[i+1].getHashOfThePreviousBlock()))
+                return false;
+        }
+        return true;
+    }
 }

@@ -12,5 +12,6 @@ public class App {
             block = new Block(i + 1, block.getHashOfTheCurrentBlock());
         }
         blockchain.printBlockchain();
+        System.out.println("Blockchain is valid: " + blockchain.validate());
     }
 }

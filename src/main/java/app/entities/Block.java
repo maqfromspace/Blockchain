@@ -24,6 +24,11 @@ public class Block {
     public String getHashOfTheCurrentBlock() {
         return hashOfTheCurrentBlock;
     }
+
+    public String getHashOfThePreviousBlock() {
+        return hashOfThePreviousBlock;
+    }
+
     @Override
     public String toString() {
         return "Block:" +
