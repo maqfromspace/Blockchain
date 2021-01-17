@@ -3,55 +3,87 @@ package app.blockchain;
 
 import app.entities.Block;
 
-import java.util.Arrays;
+import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Blockchain
  */
+
 public class Blockchain {
-    Block[] blocks;
-    int size;
+    LinkedList<Block> blocks;
 
-    public Blockchain(int size) {
-        this.size = size;
-        this.blocks = new Block[size];
+    public Blockchain() {
+        this.blocks = new LinkedList<>();
     }
 
-    /**
-     * Method finds first empty cell for block
-     * @return empty cell index or -1 if array is full
-     */
-    private int findEmptyCellIndex() {
-        for (int i = 0; i <= blocks.length; i++) {
-            if (blocks[i] == null)
-                return i;
-        }
-        return -1;
-    }
 
     /**
      * Method adds block in blockchain
      * @param block - block
      */
     public void addBlock(Block block) {
-        int idx = findEmptyCellIndex();
-
-        if (idx != -1)
-            blocks[idx] = block;
+        blocks.add(block);
     }
 
     /**
      * Method prints blocks
      */
     public void printBlockchain() {
-        Arrays.stream(blocks).forEach(System.out::println);
+        blocks.forEach(System.out::println);
     }
 
-    public boolean validate() {
-        for(int i = 0; i < blocks.length - 1; i++) {
-            if(!blocks[i].getHashOfTheCurrentBlock().equals(blocks[i+1].getHashOfThePreviousBlock()))
+    public boolean isValid() {
+        if(blocks.size() == 0 || blocks.size() == 1)
+            return true;
+        for(int i = 1; i < blocks.size(); i++) {
+            String curBlockHash = blocks.get(i).getHashOfThePreviousBlock();
+            String prevBlockHash = blocks.get(i - 1).getHashOfTheCurrentBlock();
+            if(!curBlockHash.equals(prevBlockHash)) {
+                System.out.println(i);
+                System.out.println(curBlockHash);
+                System.out.println(prevBlockHash);
                 return false;
+            }
         }
         return true;
+    }
+
+    public List<Block> getBlocks() {
+        return blocks;
+    }
+
+    public void serialize() {
+        try
+        {
+            FileOutputStream fos = new FileOutputStream("blockchain");
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(blocks);
+            oos.close();
+            fos.close();
+        }
+        catch (IOException ioe)
+        {
+            System.out.println("Failed to serialize blocks from file");
+
+        }
+    }
+
+    public boolean deserialize() {
+        try
+        {
+            FileInputStream fis = new FileInputStream("blockchain");
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            blocks = (LinkedList<Block>) ois.readObject();
+            ois.close();
+            fis.close();
+            return true;
+        }
+        catch (IOException | ClassNotFoundException exception)
+        {
+            System.out.println("Failed to deserialize blocks from file");
+            return false;
+        }
     }
 }
