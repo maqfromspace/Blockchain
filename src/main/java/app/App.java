@@ -2,10 +2,12 @@ package app;
 
 import app.blockchain.Blockchain;
 import app.entities.Block;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.util.Scanner;
 
+@Slf4j
 public class App {
     public static Scanner scanner = new Scanner(System.in);
 
@@ -13,10 +15,10 @@ public class App {
         Blockchain blockchain = new Blockchain();
         File file = new File("blockchain");
         if (file.exists()) {
-            System.out.println("Blockchain file found");
+            log.info("Blockchain file found");
             if (blockchain.deserialize() && blockchain.isValid()) {
-                System.out.println("Blockchain in file is valid");
-                System.out.println("How many blocks do you want to add?");
+                log.info("Blockchain in file is valid");
+                log.info("How many blocks do you want to add?");
                 int countOfBlocks = scanner.nextInt();
                 String prefix = createPrefix();
                 int sizeOfBlockchain = blockchain.getBlocks().size();
@@ -31,12 +33,12 @@ public class App {
                 blockchain.serialize();
                 blockchain.printBlockchain();
             } else {
-                System.out.println("Blockchain in file is not valid");
+                log.info("Blockchain in file is not valid");
             }
         } else {
-            System.out.println("Blockchain file not found");
+            log.info("Blockchain file not found");
             String prefix = createPrefix();
-            System.out.println("How many blocks do you want to add?");
+            log.info("How many blocks do you want to add?");
             int countOfBlocks = scanner.nextInt();
             Block block = new Block(1, "0", prefix);
             for (int i = 1; i <= countOfBlocks; i++) {
@@ -49,7 +51,7 @@ public class App {
     }
 
     private static String createPrefix() {
-        System.out.println("Enter how many zeros the hash must start with: ");
+        log.info("Enter how many zeros the hash must start with: ");
         int numberOfZeros = scanner.nextInt();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < numberOfZeros; i++) {
