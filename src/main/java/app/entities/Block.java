@@ -1,6 +1,7 @@
 package app.entities;
 
 import app.security.HashUtil;
+import lombok.Getter;
 
 import java.io.Serializable;
 import java.time.LocalTime;
@@ -15,7 +16,9 @@ public class Block implements Serializable {
     int id;
     long timestamp;
     int magicNumber;
+    @Getter
     String hashOfThePreviousBlock;
+    @Getter
     String hashOfTheCurrentBlock;
     long timeOfCreation;
 
@@ -34,15 +37,6 @@ public class Block implements Serializable {
         this.timestamp = new Date().getTime();
         this.hashOfThePreviousBlock = hashOfThePreviousBlock;
         this.hashOfTheCurrentBlock = hash;
-    }
-
-
-    public String getHashOfTheCurrentBlock() {
-        return hashOfTheCurrentBlock;
-    }
-
-    public String getHashOfThePreviousBlock() {
-        return hashOfThePreviousBlock;
     }
 
     @Override
