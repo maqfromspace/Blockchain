@@ -1,6 +1,7 @@
 package app;
 
 import app.blockchain.Blockchain;
+import app.blockchain.Miner;
 import app.entities.Block;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,6 +14,7 @@ public class App {
 
     public static void main(String[] args) {
         Blockchain blockchain = new Blockchain();
+        Miner miner = new Miner(1);
         File file = new File("blockchain");
         if (file.exists()) {
             log.info("Blockchain file found");
@@ -25,10 +27,10 @@ public class App {
                 String hashOfPreviousBlock = blockchain.getBlocks()
                         .get(sizeOfBlockchain - 1)
                         .getHashOfTheCurrentBlock();
-                Block block = new Block(sizeOfBlockchain + 1, hashOfPreviousBlock, prefix);
+                Block block = miner.miningBlock(sizeOfBlockchain + 1, hashOfPreviousBlock, prefix);
                 for (int i = sizeOfBlockchain + 1; i <= sizeOfBlockchain + countOfBlocks; i++) {
                     blockchain.addBlock(block);
-                    block = new Block(i + 1, block.getHashOfTheCurrentBlock(), prefix);
+                    block = miner.miningBlock(i + 1, block.getHashOfTheCurrentBlock(), prefix);
                 }
                 blockchain.serialize();
                 blockchain.printBlockchain();
@@ -40,10 +42,10 @@ public class App {
             String prefix = createPrefix();
             log.info("How many blocks do you want to add?");
             int countOfBlocks = scanner.nextInt();
-            Block block = new Block(1, "0", prefix);
+            Block block = miner.miningBlock(1, "0", prefix);
             for (int i = 1; i <= countOfBlocks; i++) {
                 blockchain.addBlock(block);
-                block = new Block(i + 1, block.getHashOfTheCurrentBlock(), prefix);
+                block = miner.miningBlock(i + 1, block.getHashOfTheCurrentBlock(), prefix);
             }
             blockchain.serialize();
             blockchain.printBlockchain();

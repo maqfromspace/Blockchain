@@ -1,5 +1,6 @@
 package app.entities;
 
+import app.blockchain.Miner;
 import app.security.HashUtil;
 import lombok.Getter;
 
@@ -16,17 +17,18 @@ public class Block implements Serializable {
     int id;
     long timestamp;
     int magicNumber;
+    int minerId;
     @Getter
     String hashOfThePreviousBlock;
     @Getter
     String hashOfTheCurrentBlock;
     long timeOfCreation;
 
-    public Block(int id, String hashOfThePreviousBlock, String prefix) {
-        LocalTime creationStartTime =  LocalTime.now();
+    public Block(int id, String hashOfThePreviousBlock, String prefix, Miner miner) {
+        LocalTime creationStartTime = LocalTime.now();
         int magic = new Random().nextInt();
         String hash = HashUtil.applySha256(id + hashOfThePreviousBlock + magic);
-        while(!hash.startsWith(prefix)) {
+        while (!hash.startsWith(prefix)) {
             magic = new Random().nextInt();
             hash = HashUtil.applySha256(id + hashOfThePreviousBlock + magic);
         }
@@ -37,15 +39,17 @@ public class Block implements Serializable {
         this.timestamp = new Date().getTime();
         this.hashOfThePreviousBlock = hashOfThePreviousBlock;
         this.hashOfTheCurrentBlock = hash;
+        this.minerId = miner.getId();
     }
 
     @Override
     public String toString() {
         return "Block:" +
+                "\nCreated by miner: " + minerId +
                 "\nId: " + id +
                 "\nTimestamp: " + timestamp +
                 "\nHash of the previous block:\n" + hashOfThePreviousBlock +
                 "\nHash of the block:\n" + hashOfTheCurrentBlock +
-                "\nBlock was generating for " + timeOfCreation + " seconds" +"\n";
+                "\nBlock was generating for " + timeOfCreation + " seconds" + "\n";
     }
 }

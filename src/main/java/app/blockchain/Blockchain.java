@@ -14,12 +14,7 @@ import java.util.LinkedList;
 @Slf4j
 public class Blockchain {
     @Getter
-    LinkedList<Block> blocks;
-
-    public Blockchain() {
-        this.blocks = new LinkedList<>();
-    }
-
+    LinkedList<Block> blocks = new LinkedList<>();
 
     /**
      * Method adds block in blockchain
