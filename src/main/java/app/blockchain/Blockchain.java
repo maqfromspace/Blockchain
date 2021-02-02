@@ -14,7 +14,20 @@ import java.util.LinkedList;
 @Slf4j
 public class Blockchain {
     @Getter
-    LinkedList<Block> blocks = new LinkedList<>();
+    LinkedList<Block> blocks;
+    private static Blockchain blockchain;
+
+    private Blockchain() {
+        blocks = new LinkedList<>();
+    }
+
+    public static Blockchain getInstance() {
+        if (blockchain == null) {
+            blockchain = new Blockchain();
+        }
+        return blockchain;
+    }
+
 
     /**
      * Method adds block in blockchain

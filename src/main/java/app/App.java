@@ -13,7 +13,7 @@ public class App {
     public static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
-        Blockchain blockchain = new Blockchain();
+        Blockchain blockchain = Blockchain.getInstance();
         Miner miner = new Miner(1);
         File file = new File("blockchain");
         if (file.exists()) {
