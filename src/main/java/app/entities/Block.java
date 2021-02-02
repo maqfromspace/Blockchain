@@ -1,14 +1,11 @@
 package app.entities;
 
-import app.blockchain.Miner;
-import app.security.HashUtil;
 import lombok.Getter;
 
 import java.io.Serializable;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.Random;
 
 /**
  * Block entity
@@ -22,24 +19,17 @@ public class Block implements Serializable {
     String hashOfThePreviousBlock;
     @Getter
     String hashOfTheCurrentBlock;
+    @Getter
     long timeOfCreation;
 
-    public Block(int id, String hashOfThePreviousBlock, String prefix, Miner miner) {
-        LocalTime creationStartTime = LocalTime.now();
-        int magic = new Random().nextInt();
-        String hash = HashUtil.applySha256(id + hashOfThePreviousBlock + magic);
-        while (!hash.startsWith(prefix)) {
-            magic = new Random().nextInt();
-            hash = HashUtil.applySha256(id + hashOfThePreviousBlock + magic);
-        }
-
+    public Block(int id, int magicNumber, String hashOfTheCurrentBlock, String hashOfThePreviousBlock, LocalTime creationStartTime, int minerId) {
         this.id = id;
-        this.magicNumber = magic;
+        this.magicNumber = magicNumber;
         this.timeOfCreation = ChronoUnit.SECONDS.between(creationStartTime, LocalTime.now());
         this.timestamp = new Date().getTime();
+        this.hashOfTheCurrentBlock = hashOfTheCurrentBlock;
         this.hashOfThePreviousBlock = hashOfThePreviousBlock;
-        this.hashOfTheCurrentBlock = hash;
-        this.minerId = miner.getId();
+        this.minerId = minerId;
     }
 
     @Override

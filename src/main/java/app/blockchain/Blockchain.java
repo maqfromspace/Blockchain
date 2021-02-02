@@ -2,7 +2,6 @@ package app.blockchain;
 
 
 import app.entities.Block;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -13,17 +12,24 @@ import java.util.LinkedList;
  */
 @Slf4j
 public class Blockchain {
-    @Getter
-    LinkedList<Block> blocks;
+    private final int SIZE;
+    private volatile LinkedList<Block> blocks;
     private static Blockchain blockchain;
+    private int numberOfZerosInHash = 0;
 
-    private Blockchain() {
+    private Blockchain(int size) {
         blocks = new LinkedList<>();
+        SIZE = size;
     }
 
-    public static Blockchain getInstance() {
+    /**
+     * Method returns instance of blockchain
+     * @param size - size of blockchain
+     * @return instance of blockchain
+     */
+    public static Blockchain getInstance(int size) {
         if (blockchain == null) {
-            blockchain = new Blockchain();
+            blockchain = new Blockchain(size);
         }
         return blockchain;
     }
@@ -34,19 +40,19 @@ public class Blockchain {
      *
      * @param block - block
      */
-    public void addBlock(Block block) {
-        blocks.add(block);
-    }
-
-    /**
-     * Method prints blocks
-     */
-    public void printBlockchain() {
-        for (Block block : blocks) {
+    public synchronized void addBlock(Block block) {
+        if (block.getHashOfThePreviousBlock().equals(getHashOfTheLastBlock()) && block.getHashOfTheCurrentBlock().startsWith(blockchain.getPrefix())) {
+            blocks.add(block);
             log.info(String.valueOf(block));
+            numberOfZerosInHash++;
         }
     }
 
+    /**
+     * Method validates blockchain blocks
+     *
+     * @return blockchain correctness status
+     */
     public boolean isValid() {
         if (blocks.size() == 0 || blocks.size() == 1)
             return true;
@@ -60,6 +66,9 @@ public class Blockchain {
         return true;
     }
 
+    /**
+     * Serialize blockchain
+     */
     public void serialize() {
         try {
             FileOutputStream fos = new FileOutputStream("blockchain");
@@ -72,6 +81,9 @@ public class Blockchain {
         }
     }
 
+    /**
+     * Deserialize blockchain
+     */
     public boolean deserialize() {
         try {
             FileInputStream fis = new FileInputStream("blockchain");
@@ -84,5 +96,41 @@ public class Blockchain {
             log.warn("Failed to deserialize blocks from file");
             return false;
         }
+    }
+
+    /**
+     * Method returns current size of blockchain
+     *
+     * @return current size of blockchain
+     */
+    public int getCurrentSize() {
+        return blocks.size();
+    }
+
+    /**
+     * Method returns hash of the last element of blockchain
+     *
+     * @return hash of the last element of blockchain
+     */
+    public String getHashOfTheLastBlock() {
+        return blocks.isEmpty() ? "0" : blocks.getLast().getHashOfTheCurrentBlock();
+    }
+
+    /**
+     * Method returns the required prefix in the hash of the new block
+     *
+     * @return required prefix in the hash of the new block
+     */
+    public String getPrefix() {
+        return blocks.isEmpty() ? "" : "0".repeat(numberOfZerosInHash);
+    }
+
+    /**
+     * Method returns fullness of blockchain
+     *
+     * @return fullness of blockchain
+     */
+    public boolean isFull() {
+        return blocks.size() >= SIZE;
     }
 }
