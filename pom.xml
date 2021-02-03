@@ -6,7 +6,7 @@
 
     <groupId>com.maqfromspace</groupId>
     <artifactId>Blockchain</artifactId>
-    <version>0.0.8</version>
+    <version>0.0.9</version>
     <build>
         <plugins>
             <plugin>

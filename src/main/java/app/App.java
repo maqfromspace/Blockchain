@@ -2,9 +2,11 @@ package app;
 
 import app.blockchain.Blockchain;
 import app.blockchain.Miner;
+import app.factories.MinerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,12 +24,12 @@ public class App {
         int numberOfMiners = scanner.nextInt();
 
         Blockchain blockchain = Blockchain.getInstance(size);
+        MinerFactory minerFactory = new MinerFactory(blockchain);
+        List<Miner> miners = minerFactory.createMiners(numberOfMiners);
         ExecutorService executor = Executors.newFixedThreadPool(numberOfMiners);
-        for(int i = 1; i <= numberOfMiners; i++) {
-            executor.submit(new Miner(i, blockchain));
-        }
+        miners.forEach(executor::submit);
         executor.shutdown();
-        if(executor.awaitTermination(10, TimeUnit.SECONDS)) {
+        if(executor.awaitTermination(30, TimeUnit.MINUTES)) {
             log.info("Mining completed!");
         } else {
             log.info("Mining was not completed correctly");

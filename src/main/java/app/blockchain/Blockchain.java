@@ -12,10 +12,12 @@ import java.util.LinkedList;
  */
 @Slf4j
 public class Blockchain {
+    public static final int INCREASE_TIME = 5;
+    public static final int DECREASE_TIME = 10;
     private static Blockchain blockchain;
     private final int SIZE;
     private volatile LinkedList<Block> blocks;
-    private int numberOfZerosInHash = 0;
+    private volatile int numberOfZerosInHash = 0;
 
     private Blockchain(int size) {
         blocks = new LinkedList<>();
@@ -45,15 +47,15 @@ public class Blockchain {
             blocks.add(block);
             log.info(String.valueOf(block));
             long timeOfCreation = block.getTimeOfCreation();
-            if(timeOfCreation < 5) {
+            if(timeOfCreation < INCREASE_TIME) {
                 numberOfZerosInHash++;
-                log.info("Number of zeros in hash was increased to {}", numberOfZerosInHash);
+                log.info("Number of zeros in hash was increased to {}\n", numberOfZerosInHash);
             }
-            else if(timeOfCreation > 10) {
+            else if(timeOfCreation > DECREASE_TIME && numberOfZerosInHash > 0) {
                 numberOfZerosInHash--;
-                log.info("Number of zeros in hash was decreased to {}", numberOfZerosInHash);
+                log.info("Number of zeros in hash was decreased to {}\n", numberOfZerosInHash);
             } else {
-                log.info("Number of zeros in hash stays the same");
+                log.info("Number of zeros in hash stays the same\n");
             }
         }
     }
