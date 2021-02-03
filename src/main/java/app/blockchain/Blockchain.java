@@ -12,9 +12,9 @@ import java.util.LinkedList;
  */
 @Slf4j
 public class Blockchain {
+    private static Blockchain blockchain;
     private final int SIZE;
     private volatile LinkedList<Block> blocks;
-    private static Blockchain blockchain;
     private int numberOfZerosInHash = 0;
 
     private Blockchain(int size) {
@@ -44,7 +44,17 @@ public class Blockchain {
         if (block.getHashOfThePreviousBlock().equals(getHashOfTheLastBlock()) && block.getHashOfTheCurrentBlock().startsWith(blockchain.getPrefix())) {
             blocks.add(block);
             log.info(String.valueOf(block));
-            numberOfZerosInHash++;
+            long timeOfCreation = block.getTimeOfCreation();
+            if(timeOfCreation < 5) {
+                numberOfZerosInHash++;
+                log.info("Number of zeros in hash was increased to {}", numberOfZerosInHash);
+            }
+            else if(timeOfCreation > 10) {
+                numberOfZerosInHash--;
+                log.info("Number of zeros in hash was decreased to {}", numberOfZerosInHash);
+            } else {
+                log.info("Number of zeros in hash stays the same");
+            }
         }
     }
 
