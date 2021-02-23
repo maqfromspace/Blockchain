@@ -12,14 +12,18 @@ import java.util.LinkedList;
  */
 @Slf4j
 public class Blockchain {
+    public static final int INCREASE_TIME = 5;
+    public static final int DECREASE_TIME = 10;
+    private static Blockchain blockchain;
     private final int SIZE;
     private volatile LinkedList<Block> blocks;
-    private static Blockchain blockchain;
-    private int numberOfZerosInHash = 0;
+    private volatile int numberOfZerosInHash = 0;
+    private volatile LinkedList<String> messagePool;
 
     private Blockchain(int size) {
         blocks = new LinkedList<>();
         SIZE = size;
+        messagePool = new LinkedList<>();
     }
 
     /**
@@ -43,9 +47,32 @@ public class Blockchain {
     public synchronized void addBlock(Block block) {
         if (block.getHashOfThePreviousBlock().equals(getHashOfTheLastBlock()) && block.getHashOfTheCurrentBlock().startsWith(blockchain.getPrefix())) {
             blocks.add(block);
-            log.info(String.valueOf(block));
-            numberOfZerosInHash++;
+            if(blocks.size() > 1) {
+                block.setMessages(messagePool);
+                log.info(String.valueOf(block));
+                messagePool.clear();
+            }
+            long timeOfCreation = block.getTimeOfCreation();
+            if(timeOfCreation < INCREASE_TIME) {
+                numberOfZerosInHash++;
+                log.info("Number of zeros in hash was increased to {}\n", numberOfZerosInHash);
+            }
+            else if(timeOfCreation > DECREASE_TIME && numberOfZerosInHash > 0) {
+                numberOfZerosInHash--;
+                log.info("Number of zeros in hash was decreased to {}\n", numberOfZerosInHash);
+            } else {
+                log.info("Number of zeros in hash stays the same\n");
+            }
         }
+    }
+
+    /**
+     * Method adds message in message pool
+     *
+     * @param message - message from miner
+     */
+    public synchronized void addMessage(String message) {
+        messagePool.add(message);
     }
 
     /**
