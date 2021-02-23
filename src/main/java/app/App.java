@@ -49,7 +49,8 @@ public class App {
 
         scheduler.shutdown();
 
-        if (executor.awaitTermination(30, TimeUnit.MINUTES)) {
+        if (scheduler.awaitTermination(30, TimeUnit.MINUTES)) {
+
             log.info("Chat closed!");
         } else {
             log.info("Chat was closed incorrectly");
