@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+## [0.0.1] - 23.02.2021
+### Added
+    - Added a chat clients (Maksim Leonov & Vasya Pupkin) that can send messages to be stored in the blockchain message pool
+    - Added block data field in block that contains messages from message pool
+    that have been generated since previous block was created
+
 ## [0.0.9] - 03.02.2021
 ### Added
     - Added miners factory

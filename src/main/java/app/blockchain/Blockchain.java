@@ -18,10 +18,12 @@ public class Blockchain {
     private final int SIZE;
     private volatile LinkedList<Block> blocks;
     private volatile int numberOfZerosInHash = 0;
+    private volatile LinkedList<String> messagePool;
 
     private Blockchain(int size) {
         blocks = new LinkedList<>();
         SIZE = size;
+        messagePool = new LinkedList<>();
     }
 
     /**
@@ -45,7 +47,11 @@ public class Blockchain {
     public synchronized void addBlock(Block block) {
         if (block.getHashOfThePreviousBlock().equals(getHashOfTheLastBlock()) && block.getHashOfTheCurrentBlock().startsWith(blockchain.getPrefix())) {
             blocks.add(block);
-            log.info(String.valueOf(block));
+            if(blocks.size() > 1) {
+                block.setMessages(messagePool);
+                log.info(String.valueOf(block));
+                messagePool.clear();
+            }
             long timeOfCreation = block.getTimeOfCreation();
             if(timeOfCreation < INCREASE_TIME) {
                 numberOfZerosInHash++;
@@ -58,6 +64,15 @@ public class Blockchain {
                 log.info("Number of zeros in hash stays the same\n");
             }
         }
+    }
+
+    /**
+     * Method adds message in message pool
+     *
+     * @param message - message from miner
+     */
+    public synchronized void addMessage(String message) {
+        messagePool.add(message);
     }
 
     /**
